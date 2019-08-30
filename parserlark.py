@@ -37,7 +37,7 @@ class Transf(Transformer):
 	def if_t_e(self, items):
 		return ('if', items[0], items[1], items[2])	
 
-def parse(sentence='if (true) then (pred (0)) else false'):
+def parse(sentence):
 	try:
 		tree = l0_parser.parse(sentence)
 		tree = Transf().transform(tree)
@@ -45,6 +45,3 @@ def parse(sentence='if (true) then (pred (0)) else false'):
 		print('Parsing went wrong')
 		return False
 	return tree
-
-if __name__ == '__main__':
-	print('This is an L0 parser module made by Artur Waquil Campana')
