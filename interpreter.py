@@ -9,7 +9,7 @@ import argparse
 def is_numerical_value(tree):
 	if tree == '0':
 		return True
-	elif len(tree) == 2 and tree[0] == 'succ' and is_numerical_value(tree[1]):
+	elif tree[0] == 'succ' and is_numerical_value(tree[1]):
 		return True
 	else:
 		return False
@@ -29,25 +29,25 @@ def type_infer(tree):
 	elif tree == 'false':
 		return 'Bool'																		# T-False
 
-	elif len(tree) == 2 and tree[0] == 'succ':
+	elif tree[0] == 'succ':
 		if type_infer(tree[1]) == 'Nat':
 			return 'Nat'																	# T-Succ
 		else:
 			return False
 
-	elif len(tree) == 2 and tree[0] == 'pred':
+	elif tree[0] == 'pred':
 		if type_infer(tree[1]) == 'Nat':
 			return 'Nat'																	# T-Pred
 		else:
 			return False
 
-	elif len(tree) == 2 and tree[0] == 'iszero':
+	elif tree[0] == 'iszero':
 		if type_infer(tree[1]) == 'Nat':
 			return 'Bool'																	# T-IsZero
 		else:
 			return False
 
-	elif len(tree) == 4 and tree[0] == 'if':
+	elif tree[0] == 'if':
 		T = type_infer(tree[2])
 		if type_infer(tree[1]) == 'Bool' and type_infer(tree[3]) == T:						# T-If
 			return T
@@ -60,10 +60,10 @@ def small_step(tree):
 	if is_value(tree):
 		return False
 
-	elif len(tree) == 2 and tree[0] == 'succ':
+	elif tree[0] == 'succ':
 		return ('succ', small_step(tree[1]))												# E-Succ
 
-	elif len(tree) == 2 and tree[0] == 'pred':
+	elif tree[0] == 'pred':
 		if tree[1] == '0':
 			return '0'																		# E-PredZero
 		elif len(tree[1]) == 2 and tree[1][0] == 'succ' and is_numerical_value(tree[1][1]):
@@ -71,7 +71,7 @@ def small_step(tree):
 		else:
 			return ('pred', small_step(tree[1]))											# E-Pred
 
-	elif len(tree) == 2 and tree[0] == 'iszero':
+	elif tree[0] == 'iszero':
 		if tree[1] == '0':
 			return 'true'																	# E-IsZeroZero
 		elif len(tree[1]) == 2 and tree[1][0] == 'succ' and is_numerical_value(tree[1][1]):
@@ -79,7 +79,7 @@ def small_step(tree):
 		else:
 			return ('iszero', small_step(tree[1]))											# E-IsZero
 	
-	elif len(tree) == 4 and tree[0] == 'if':
+	elif tree[0] == 'if':
 		if tree[1] == 'true':
 			return tree[2]																	# E-IfTrue
 		elif tree[1] == 'false':
