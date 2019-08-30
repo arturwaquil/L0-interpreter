@@ -1,0 +1,652 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{bcprules}
+\usepackage{multicol}
+\usepackage{rsfso}
+
+\title{}
+\author{}
+\date{}
+
+
+\begin{document}
+
+\small 
+
+\hrule 
+
+\ 
+
+\begin{center}
+\Large Linguagem L0
+\end{center}
+
+\ 
+
+\hrule 
+
+\ 
+
+\ 
+
+\noindent \textbf{Sintaxe:}
+
+
+\begin{multicols}3
+
+
+
+\noindent Termos:
+\begin{align*}
+e & \ \in \textsf{L0} \\ 
+e & ::= \textsf{true} \mid \textsf{false} \\ & \mid \textsf{0} \mid \textsf{succ}\ e     \\ \ &  \mid \textsf{if}\ e_1\ \textsf{then}\ e_2\ \textsf{else}\ e_3 \\ & \mid \textsf{iszero}\ e \mid \textsf{pred}\ e 
+\end{align*}
+
+\noindent Valores:
+\begin{align*}
+v & \ \in \ \textsf{Values} \\
+v & ::= \ \textsf{true}  \mid  \textsf{false}  \mid nv \\ \\
+nv & \ \in \ \textsf{NV} \\
+nv & ::= \ \textsf{0} \mid  \textsf{succ}\ nv
+\end{align*}
+
+\noindent Tipos:
+\begin{align*}
+T & \ \in \ \textsf{Types} \\
+T & ::= \textsf{nat} \mid \textsf{bool}
+\end{align*}
+
+\end{multicols}
+
+\ 
+
+\ 
+
+\hrule
+
+\ 
+
+\ 
+
+\noindent \textbf{Semântica operacional small-step:}
+
+\ 
+
+\noindent A relação $\longrightarrow\  \subseteq (\textsf{L0} \times \textsf{L0})$ é a menor relação satisfazendo as seguintes regras:
+
+\ 
+
+\begin{multicols}2
+
+\infrule[E-IfTrue]
+{}
+{\textsf{if}\  \textsf{true}\  \textsf{then}\  e_2\  \textsf{else}\ e_3  \longrightarrow e_2 }
+
+
+\infrule[E-IfFalse]
+{}
+{\textsf{if}\  \textsf{false}\  \textsf{then}\  e_2\  \textsf{else}\ e_3  \longrightarrow e_3 }
+
+
+\infrule[E-IF]
+{e \longrightarrow e'}
+{\textsf{if}\  {e}\  \textsf{then}\  e_2\  \textsf{else}\ e_3 \longrightarrow 
+\textsf{if}\  {e'}\  \textsf{then}\  e_2\  \textsf{else}\ e_3  }
+
+
+\infrule[E-Succ]
+{e \longrightarrow e'}
+{\textsf{succ}\ e \longrightarrow \textsf{succ}\ e'}
+
+\infrule[E-PredZero]
+{}
+{\textsf{pred}\ \textsf{0} \longrightarrow \textsf{0}}
+
+\infrule[E-PredSucc]
+{}
+{\textsf{pred}\ (\textsf{succ}\ nv) \longrightarrow nv}
+
+\infrule[E-Pred]
+{e \longrightarrow e'}
+{\textsf{pred}\ e \longrightarrow \textsf{pred}\ e'}
+
+
+
+\infrule[E-IsZeroZero]
+{}
+{\textsf{iszero}\ \textsf{0}  \longrightarrow \textsf{true}}
+
+\infrule[E-IsZeroSucc]
+{}
+{\textsf{iszero}\ (\textsf{succ}\ nv)  \longrightarrow \textsf{false}}
+
+\infrule[E-IsZero]
+{e \longrightarrow e'}
+{\textsf{iszero}\ e \longrightarrow \textsf{iszero}\ e'}
+
+\end{multicols}
+
+
+\noindent A relação $\longrightarrow^*\  \subseteq (\textsf{L0} \times \textsf{L0})$ é o fecho transitivo e reflexivo de $\longrightarrow$.
+
+\ 
+
+\ 
+
+\hrule
+
+\ 
+
+\ 
+
+\noindent \textbf{Semântica operacional big-step:}
+
+\ 
+
+\noindent A relação $\Downarrow\  \subseteq (\textsf{L0} \times \textsf{Values})$ é a menor relação satisfazendo as seguintes regras:
+
+
+\begin{multicols}{2}
+
+  
+\infrule[B-Values]{}{ {v}\Downarrow {v}}
+
+  
+\infrule[B-IfTrue]
+{ {e}_1 \Downarrow  \textsf{true}
+ \andalso
+  {e}_2 \Downarrow  {v}_2}
+{ \textsf{if}\  {e}_1\  \textsf{then}\  {e}_2\  \textsf{else}\  {e}_3 \Downarrow  {v}_2 }
+
+  
+\infrule[B-IfFalse]
+{ {e}_1 \Downarrow  \textsf{false}
+ \andalso
+  {e}_3 \Downarrow  {v}_3}
+{ \textsf{if}\  {e}_1\  \textsf{then}\  {e}_2\  \textsf{else}\  {e}_3 \Downarrow  {v}_3 }
+
+  
+\infrule[B-Succ]
+{ {e} \Downarrow  {nv}}
+{ \textsf{succ}\ e \Downarrow  \textsf{succ}\ nv}
+
+\infrule[B-PredZero]
+{ e \Downarrow  \textsf{0}}
+{ \textsf{pred}\ e \Downarrow  \textsf{0}}
+
+  
+\infrule[B-PredSucc]
+{ e \Downarrow  \textsf{succ}\ nv}
+{ \textsf{pred}\ e \Downarrow  {nv}}
+
+  
+\infrule[B-IsZeroZero]
+{ e \Downarrow  \textsf{0}}
+{ \textsf{iszero}\ e \Downarrow  \textsf{true}}
+
+  
+\infrule[B-IsZeroSucc]
+{ e \Downarrow  \textsf{succ nv}}
+{ \textsf{iszero}\ e \Downarrow  \textsf{false}}
+
+
+\end{multicols}
+
+
+\ 
+
+\hrule 
+
+
+\newpage 
+
+
+
+\hrule 
+
+\ 
+
+\  
+
+\noindent \textbf{Sistema de Tipos:}
+
+\ 
+
+\noindent A relação  $(\vdash \_ : \_ )\ \subseteq (\textsf{L0} \times \textsf{Types})$ é a menor relação satisfazendo as seguintes regras:
+
+\ 
+
+
+\begin{multicols}2
+
+
+
+\infrule[T-Zero]
+{}
+{
+\vdash  \textsf{0} : \textsf{nat}
+}
+
+\infrule[T-Succ]
+{
+\vdash  e : \textsf{nat}
+}
+{
+\vdash  \textsf{succ}\ e : \textsf{nat}
+}
+
+\infrule[T-True]
+{}
+{
+ \vdash \textsf{true} : \textsf{bool}
+}
+
+\infrule[T-False]
+{}
+{
+ \vdash \textsf{false} : \textsf{bool}
+}
+
+\infrule[T-If]
+{
+ \vdash e_1 : \textsf{bool}
+\andalso
+ \vdash e_2 : T
+\andalso
+ \vdash e_3 : T
+}
+{
+\vdash \textsf{if}\  e_1\  \textsf{then}\  e_2\  \textsf{else}\ e_3  : T
+}
+
+\infrule[T-IsZero]
+{
+ \vdash e : \textsf{nat}
+}
+{
+ \vdash \textsf{iszero}\ e : \textsf{bool}
+}
+
+\infrule[T-Pred]
+{
+\vdash  e : \textsf{nat}
+}
+{
+\vdash  \textsf{pred}\ e : \textsf{nat}
+}
+
+\end{multicols}
+
+
+
+\ 
+
+\hrule 
+
+\ 
+
+\ 
+
+\noindent \textbf{Algoritmo de inferência de tipos (Racket/Advanced Student)}
+
+
+\begin{multicols}{2}
+
+\begin{verbatim}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;;             Sintaxe                     ;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; um termo é 
+;;  'true,  ou 
+;;  'false, ou
+;;  'zero,  ou 
+;;  (list 'succ   t),      onde t:termo, ou
+;;  (list 'pred   t),      onde t:termo, ou
+;;  (list 'iszero t),      onde t:termo, ou
+;;  (list 'if t1 t2 t3),   onde t1,t2,t3:termo
+
+;; um tipo é
+;;   'bool ou 'nat
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;;            Exemplos                     ;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ex1
+  (list 'if 
+        (list 'iszero 
+          (list 'pred 
+             (list 'succ 'zero)))
+        'true
+        'false))
+
+(define ex2
+  (list 'iszero 
+        (list 'if 'true 'false 'zero)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;;          Inferência                    ;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; typeInfer : termo -> tipo ou false
+
+;; (typeInfer t) devolve o tipo associado 
+;; ao termo t pelo sistema de tipos de L0, 
+;; ou false se não houver esse tipo
+
+(define (typeInfer t)
+ (cond
+
+  [(equal? t 'true)  'bool]
+
+  [(equal? t 'false) 'bool]
+
+  [(equal? t 'zero)   'nat]
+
+  [(equal? (first t) 'succ) 
+    (cond 
+    [(equal? 'nat (typeInfer (second t))) 'nat]
+    [else                              false])]
+
+  [(equal? (first t) 'pred) 
+    (cond 
+    [(equal? 'nat (typeInfer (second t))) 'nat]
+    [else                              false])]
+
+  [(equal? (first t) 'iszero) 
+    (cond 
+    [(equal? 'nat (typeInfer (second t))) 'bool]
+    [else                               false])]
+
+  [(equal? (first t) 'if) 
+    (local 
+     ( 
+     (define tp1 (typeInfer (second t)))
+     (define tp2 (typeInfer (third  t))) 
+     (define tp3 (typeInfer (fourth t)))
+     )
+    (cond 
+    [(and (equal? 'bool tp1) 
+          (equal? tp2   tp3))        tp2]
+    [else                          false]))])) 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;;            Testes                  ;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(check-expect (typeInfer ex1) 'bool)
+(check-expect (typeInfer ex2) false)
+\end{verbatim}
+
+\end{multicols}
+
+
+
+\ 
+
+\hrule 
+
+
+\ 
+
+\ 
+
+
+
+\noindent \textbf{Definições}
+
+
+\begin{itemize}
+    \item $\textsf{FN}(e) = \neg \exists e'.\ (e \longrightarrow e')$
+    \item $\textsf{PossuiFN}(e) = \exists e'.\ (e \longrightarrow^* e' \land \textsf{FN}(e'))$
+    \item $\textsf{Erro}(e) = \textsf{FN}(e)\ \land\ e \not\in \textsf{Values}$
+    \item $\textsf{Leva-a-Erro}(e) = \exists e'.\ (e \longrightarrow^* e' \land \textsf{Erro}(e'))$
+    \item $\textsf{Diverge}(e)$ = $\forall e'.$ (se\ $e \longrightarrow^* e'$\ então\ $\exists e''.(e' \longrightarrow e'')$). 
+\end{itemize}
+
+
+
+\ 
+
+
+\noindent \textbf{Propriedades de linguagens}
+
+
+\begin{itemize}
+
+\item valores não progridem: se $ {v} \in \textsf{Values}$ então $\textsf{FN}(v)$
+
+\item normalização (fraca): se ${e}\in \textsf{L0}$  então $\textsf{PossuiFN}(e)$ 
+
+\item normalização (forte): se ${e}\in \textsf{L0}$  então $\neg \textsf{Diverge}(e)$ 
+ 
+
+\item determinismo: se ${e} \longrightarrow {e}_1$ e 
+${e} \longrightarrow {e}_2$
+então ${e}_1={e}_2$ 
+
+
+
+\item compatibilidade entre semânticas: ${e} \longrightarrow^* {v}$  se, e somente se,   ${e} \Downarrow {v} $
+ 
+ 
+\item unicidade de tipos: se $\vdash {e} : {T}_1$ e $\vdash {e} : {T}_2$, 
+então $T_1={T}_2$
+
+ 
+
+\item preservação de tipos: se ${e} \longrightarrow  {e'}$ então, para todo  $T$, se $\vdash {e} : {T}$ então $\vdash  {e'} : {T}$.
+
+ 
+
+\item progresso: se $\vdash {e} : {T}$, então $e \in \textsf{Values}$ ou $\exists e'. {e} \longrightarrow  {e'}$
+
+
+\item segurança: se $\vdash {e} : {T}$ então $\neg \textsf{Leva-a-Erro}(e)$.
+
+ 
+\end{itemize}  
+
+
+\ 
+
+\noindent \textbf{Propriedades de algoritmos (\texttt{typeInfer} como exemplo)}
+
+\begin{itemize}
+    
+\item \textbf{consistência}: se \texttt{(typeInfer $e$) = $T$}\ então $\vdash e : T$ 
+    
+\item \textbf{completude}: se $\vdash {e} : {T}$ então \texttt{(typeInfer $e$) = $T$}
+
+\end{itemize}
+
+
+\ 
+
+
+\ 
+
+\hrule 
+
+\ 
+
+
+\begin{center}
+\Large Simple Stack Machine
+\end{center}
+
+\ 
+
+\hrule 
+
+\ 
+
+\ 
+
+\noindent \textbf{Sintaxe:}
+\begin{multicols}{2}
+\[ 
+\begin{array}{lcl}
+n  & \in & \mathbb{N}\\   
+z  & \in & \mathbb{Z}\\ 
+b  & \in & \{\textsf{true},\textsf{false}\} \\
+i  & \in &  \textsf{Inst}\\  
+i & ::= &  \textsf{INT}\ z ~\mid~ \textsf{BOOL}\ b ~\mid~  \textsf{POP} ~\mid~  \textsf{COPY}\\
+&&  \textsf{INC} ~\mid~    \textsf{DEC} ~\mid~ \textsf{ADD} ~\mid~ \textsf{INV} ~\mid~ \textsf{EQ} ~\mid^ \textsf{GT} \\
+&&  \textsf{JUMP}\ n ~\mid~  \textsf{JMPIFZERO}\ n\\ \\
+&& \textsf{VAR}\ x \\
+&& \textsf{CLOS}(env,x,\overline{i}) \\
+&& \textsf{APPLY} \\
+\overline{i} & ::= &  [] ~\mid~  i::\overline{i} \\    
+\end{array}
+\]
+
+\[
+\begin{array}{lcl}
+ code  & \in &  \textsf{Code}\\ 
+ code & ::=  & [] ~\mid~  i::  code\\    
+ stack  & \in &  \textsf{Stack}\\
+ stack & ::=  & [] ~\mid~ z::  stack \\ 
+ \textsf{State} & = &  \textsf{Code}\times\textsf{Stack}\\ \\
+
+ {sv} & \in &  \textsf{SValues}\\
+ {sv} & ::= & ([],z::[]) \\
+\end{array}
+\]
+
+\end{multicols}
+
+\ 
+
+
+\hrule 
+
+
+ 
+
+ 
+
+\ 
+
+\ 
+
+\noindent \textbf{Semântica operacional small-step:}
+
+\ 
+
+\noindent A relação $\rhd \subseteq \textsf{State} \times \textsf{State}$ é a menor relação  tal que as seguinte regras valem:
+
+
+\infrule[]{}{( \textsf{PUSH}\ z::code,\ stack) \rhd (code,\ z::stack)}
+
+  
+\infrule[]{}{( \textsf{POP}::code,\ z::stack) \rhd (code,\ stack)}
+
+  
+\infrule[]{}{( \textsf{COPY}::code,\ z::stack) \rhd (code,\ z::z::stack)}
+
+  
+\infrule[]{}{( \textsf{INC}::code,\ z::stack) \rhd (code,\ (z+1)::stack)}
+ 
+\infrule[]{}{( \textsf{DEC}::code,\ z::stack) \rhd (code,\ (z-1)::stack)}
+
+  
+\infrule[]{}{( \textsf{JUMP}\ n :: i_1 :: \ldots :: i_n :: code,\ stack) \rhd (code,\ stack)}
+
+  
+\infrule[]{}{( \textsf{JMPIFZERO}\ n :: i_1 :: \ldots :: i_n :: code,\ 0::stack) \rhd (code,\ stack)}
+
+  
+\infrule[]{z \neq 0}{( \textsf{JMPIFZERO}\ n :: code,\ z::stack) \rhd (code,\ stack)}
+
+
+
+\ 
+
+\noindent A relação $\rhd^* \subseteq \textsf{State} \times \textsf{State}$ é o fecho transitivo e reflexivo de $\rhd$.
+
+\ 
+ 
+\ 
+
+\hrule 
+
+\ 
+
+\ 
+
+\noindent \textbf{Função de compilação L0/SSM} 
+
+\ 
+
+$\mathcal{C}:  \textsf{L0} \to  \textsf{Code} $
+
+\ 
+
+\[
+\begin{array}{lcl}
+\mathcal{C}( \textsf{true}) & = &  \textsf{[PUSH 1]}\\ \\   
+\mathcal{C}( \textsf{false}) & = &  \textsf{[PUSH 0]}\\  \\  
+\mathcal{C}( \textsf{0}) & = &  \textsf{[PUSH 0]}\\     \\
+\mathcal{C}( \textsf{succ}\ e_1) & = & \mathcal{C}( {e}_1)  \textsf{ ++ }  \textsf{[INC]}\\    \\
+\mathcal{C}( \textsf{if}\   {e}_1\  \textsf{then}\  {e}_2 \ \textsf{else}\  {e}_3) &=&  \mathcal{C}( {e}_1)  \textsf{ ++ }  \textsf{[JMPIFZERO ($n_2$+1)]}  \textsf{ ++ }  \mathcal{C}( {e}_2)  \textsf{ ++ }  \textsf{[JUMP $n_3$]} \textsf{ ++ }  \mathcal{C}( {e}_3) \\  
+&& \textit{onde}\ \  {n}_2 =  \textit{length}(\mathcal{C}( {e}_2))\ \ \textit{e}\  \ {n}_3 =  \textit{length}(\mathcal{C}( {e}_3))\\   \\
+\mathcal{C}( \textsf{iszero}\ e_1) & = & \mathcal{C}( {e}_1)
+ \textsf{ ++ }  \textsf{[JMPIFZERO 2; PUSH 0; JUMP 1; PUSH 1]}\\    \\
+ \mathcal{C}( \textsf{pred}\ e_1) & = & \mathcal{C}( {e}_1)
+ \textsf{ ++ }  \textsf{[COPY; JMPIFZERO 1; DEC]}\\ 
+\end{array}
+\]
+
+
+
+\ 
+
+\ 
+
+
+\ 
+
+$\rho : \textsf{Values} \to \mathbb{Z}$ 
+\begin{align*}
+\rho(\textsf{true})     & =\  1 &&&&&&&&\\  
+\rho(\textsf{false})    & =\  0 \\
+\rho(\textsf{0})        & =\  0 \\
+\rho(\textsf{succ}\ nv) & =\  1 + \rho(nv) \\
+\end{align*}
+
+\ 
+
+\ 
+
+
+\hrule 
+
+\ 
+
+\ 
+
+
+\noindent \textbf{Propriedades de compilação}
+
+\ 
+
+\begin{itemize}
+    \item preservação de avaliações sem erros: se \ $e \longrightarrow^* v$\ então\ $ (\mathcal C(e),[]) ~\rhd^*~ ([],\rho(v)::[])$
+    \item unicidade de representação: se $\rho(v_1) = \rho(v_2)$ então $v_1=v_2$\\ (inválida para a semântica apresentada)
+\end{itemize}
+
+
+
+
+
+\end{document}
